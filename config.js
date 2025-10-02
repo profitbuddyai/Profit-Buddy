@@ -10,7 +10,7 @@ if (import.meta.env.VITE_VERCEL_ENV === 'preview') {
 
 const BASE_URL =
   NODE_ENV === 'production'
-    ? 'http://api.profitbuddy.ai/api/v1'
+    ? 'https://api.profitbuddy.ai/api/v1'
     : NODE_ENV === 'development'
     ? 'https://api-dev.profitbuddy.ai/api/v1'
     : 'http://localhost:2000/api/v1';
