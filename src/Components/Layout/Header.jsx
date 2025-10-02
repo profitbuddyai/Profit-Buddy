@@ -17,7 +17,7 @@ const Header = () => {
     const sub = user?.currentSubscription;
 
     useEffect(() => {
-        if (!sub || sub.status !== "active" || (sub?.currentPeriodEnd && new Date(sub?.currentPeriodEnd) < new Date())) {
+        if (!sub || (sub.status !== "active" && sub.status !== "trialing") || (sub?.currentPeriodEnd && new Date(sub?.currentPeriodEnd) < new Date())) {
             setIsSubscribed(false)
         } else {
             setIsSubscribed(true)
