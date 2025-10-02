@@ -111,4 +111,4 @@ export const SUBSCRIPTION_PLANS_DATA = {
   },
 };
 
-export const VITE_STRIPE_PUBLISHABLE_KEY = NODE_ENV === 'production' ? import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY : import.meta.env.VITE_TEST_STRIPE_PUBLISHABLE_KEY;
+export const VITE_STRIPE_PUBLISHABLE_KEY = NODE_ENV !== 'production' ? import.meta.env.VITE_TEST_STRIPE_PUBLISHABLE_KEY : import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY;

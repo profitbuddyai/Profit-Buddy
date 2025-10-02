@@ -50,7 +50,7 @@ const Plans = () => {
             // }
         } catch (err) {
             console.error(err);
-            const message = err.response ? err.response.data.message : err.message
+            const message = err.response ? err.response.data.error : err.message
             toast.error(message)
         } finally {
             setLoading(false)

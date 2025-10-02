@@ -23,7 +23,6 @@ import { dispatch } from "../Redux/Store";
 
 const stripePromise = loadStripe(VITE_STRIPE_PUBLISHABLE_KEY);
 
-
 const Checkout = () => {
   const [clientSecret, setClientSecret] = useState(null);
   const [savedCard, setSavedCard] = useState(null);
@@ -105,14 +104,21 @@ const Checkout = () => {
     setCouponLoading(true);
     try {
       const response = await verifyCoupon({ couponCode: coupon });
-      if (response.valid) {
-        setCouponData({ valid: true, code: coupon });
-      } else {
+      if (!eligibleForTrial) {
+        setCouponCode(null)
         setCouponData({ valid: false, code: "" });
+        return toast.error("You are not eligible for a free trial. because you have already subscribed before.");
+      } else {
+        if (response.valid) {
+          setCouponData({ valid: true, code: coupon });
+        } else {
+          setCouponData({ valid: false, code: "" });
+        }
+        toast.success(response.message);
       }
-      toast.success(response.message);
     } catch (err) {
       toast.error(err.response?.data?.message || err.message);
+      setCouponCode(null)
       setCouponData({ valid: false, code: "" });
     } finally {
       setCouponLoading(false);
@@ -144,7 +150,7 @@ const Checkout = () => {
 
     try {
       setSubscribeLoading(true);
-      await createSubscription({ selectedPlanName, couponCode , eligibleForTrial });
+      await createSubscription({ planName: selectedPlanName, couponCode: couponData?.code || null, eligibleForTrial });
       const data = await getUserDetail();
       dispatch(setUser({
         ...data.user,
@@ -239,7 +245,7 @@ const Checkout = () => {
                     {formatDate(
                       new Date(
                         Date.now() +
-                        (SUBSCRIPTION_PLANS_DATA?.[planName]?.type === "monthly"
+                        (SUBSCRIPTION_PLANS_DATA?.[selectedPlanName]?.type === "monthly"
                           ? 30 * 24 * 60 * 60 * 1000
                           : 365 * 24 * 60 * 60 * 1000)
                       )
@@ -247,7 +253,7 @@ const Checkout = () => {
                     {formatYear(
                       new Date(
                         Date.now() +
-                        (SUBSCRIPTION_PLANS_DATA?.[planName]?.type === "monthly"
+                        (SUBSCRIPTION_PLANS_DATA?.[selectedPlanName]?.type === "monthly"
                           ? 30 * 24 * 60 * 60 * 1000
                           : 365 * 24 * 60 * 60 * 1000)
                       )
@@ -291,8 +297,16 @@ const Checkout = () => {
               <div className="w-full">
                 <p className="text-sm text-red-500 bg-red-500/10 w-full p-2 rounded">
                   Note: Actual payment will be automatically charged on{' '}
-                  {formatDate(new Date(Date.now() + 14 * 24 * 60 * 60 * 1000))},{' '}
-                  {formatYear(new Date(Date.now() + 14 * 24 * 60 * 60 * 1000))} , when free trial ends
+                  {formatDate(
+                    new Date(
+                      Date.now() + (couponData?.valid ? 30 : 14) * 24 * 60 * 60 * 1000
+                    )
+                  )},{' '}
+                  {formatYear(
+                    new Date(
+                      Date.now() + (couponData?.valid ? 30 : 14) * 24 * 60 * 60 * 1000
+                    )
+                  )}, when free trial ends
                 </p>
               </div>
             )}
@@ -305,7 +319,7 @@ const Checkout = () => {
               <div className="flex flex-col items-start gap-2">
                 <div className="flex items-center gap-1 text-gray-700">
                   <img src="https://img.icons8.com/color/48/bank-card-back-side.png" alt="" className="w-[30px]" />
-                  {savedCard.brand?.toUpperCase()}
+                  {savedCard?.brand?.toUpperCase()}
                   <div className="flex items-center !text-[8px] h-full">
                     <GoDotFill /> <GoDotFill /><GoDotFill /><GoDotFill />
                   </div>
@@ -351,9 +365,6 @@ const Checkout = () => {
     </div>
   );
 };
-
-
-
 
 
 export default Checkout;
