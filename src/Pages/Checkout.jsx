@@ -9,7 +9,7 @@ import { useNavigate } from "react-router-dom";
 import { SUBSCRIPTION_PLANS_DATA, VITE_STRIPE_PUBLISHABLE_KEY } from "../Enums/Enums";
 import { getUserDetail } from "../Apis/User";
 import { setUser } from "../Redux/Slices/UserSlice";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { BsArrowLeft, BsChevronExpand, BsDot } from "react-icons/bs";
 import { authClient } from './../Services/Axios';
 import CustomInput from "../Components/Controls/CustomInput";
@@ -34,6 +34,7 @@ const Checkout = () => {
   const [couponData, setCouponData] = useState({});
   const [cardChangeLoading, setCardChangeLoading] = useState(false);
   const [subscribeLoading, setSubscribeLoading] = useState(false);
+  const { theme } = useSelector((state) => state.system);
   const navigate = useNavigate();
 
 
@@ -182,10 +183,10 @@ const Checkout = () => {
   }
 
   return (
-    <div className="bg-[#fafafa] min-h-screen flex justify-center items-start py-12 px-6 gap-8">
+    <div className="bg-lBackground min-h-screen flex justify-center items-start py-12 px-6 gap-8">
       <div className="flex gap-10 w-full max-w-[1000px]">
 
-        <div className="w-full relative p-6 bg-white border border-border rounded-lg flex flex-col gap-4 h-max">
+        <div className="w-full relative p-6 bg-primary border border-border rounded-lg flex flex-col gap-4 h-max">
 
           <button
             onClick={() => navigate("/")}
@@ -196,7 +197,7 @@ const Checkout = () => {
           </button>
           <>
             <div className="flex justify-between items-center">
-              <span className="text-gray-600">Plan:</span>
+              <span className="text-secondary">Plan:</span>
               <PopupMenu
                 data={Object.values(SUBSCRIPTION_PLANS_DATA).map((plan) => ({
                   name: plan.idName,
@@ -205,7 +206,7 @@ const Checkout = () => {
                   active: plan.id === selectedPlanName,
                 }))}
                 trigger={
-                  <span className="font-medium cursor-pointer text-gray-700 flex bg-border/30 border rounded-lg px-3 py-1 border-border items-center gap-2">
+                  <span className="font-medium cursor-pointer text-secondary flex bg-border/30 border rounded-lg px-3 py-1 border-border items-center gap-2">
                     {SUBSCRIPTION_PLANS_DATA?.[selectedPlanName]?.idName || "Select a plan"}
                     <BsChevronExpand />
                   </span>
@@ -215,8 +216,8 @@ const Checkout = () => {
             </div>
             {eligibleForTrial && (
               <div className="flex justify-between">
-                <span className="text-gray-600">Free Trial:</span>
-                <span className="font-medium text-gray-700">
+                <span className="text-secondary">Free Trial:</span>
+                <span className="font-medium text-secondary">
                   {couponData.valid
                     ? `(${couponData.code}) 30 Days Free Trial`
                     : "14 Days Free Trial"}
@@ -225,10 +226,10 @@ const Checkout = () => {
             )}
 
             <div className="flex justify-between">
-              <span className="text-gray-600">
+              <span className="text-secondary">
                 {eligibleForTrial ? "Trial Period:" : "Subscription Period:"}
               </span>
-              <span className="text-gray-700 text-sm flex items-center gap-2">
+              <span className="text-secondary text-sm flex items-center gap-2">
                 {formatDate(new Date())}, {formatYear(new Date())}
                 <GoDash />
                 {eligibleForTrial ? (
@@ -263,11 +264,11 @@ const Checkout = () => {
               </span>
             </div>
             <div className="flex justify-between">
-              <span className="text-gray-600">Amount:</span>
-              <span className="font-medium text-gray-700">
+              <span className="text-secondary">Amount:</span>
+              <span className="font-medium text-secondary">
                 {eligibleForTrial ? (
                   <>
-                    <span className="line-through text-xs mr-1 text-gray-500">
+                    <span className="line-through text-xs mr-1 text-lText">
                       ${SUBSCRIPTION_PLANS_DATA?.[selectedPlanName]?.price?.toFixed(2)}
                     </span>
                     $0.00
@@ -313,11 +314,11 @@ const Checkout = () => {
           </>
         </div>
 
-        <div className="w-full max-w-[600px] p-4 bg-white rounded-lg border border-border">
+        <div className="w-full max-w-[600px] p-4 bg-primary rounded-lg border border-border">
           {savedCard ? (
-            <div className="p-4 border border-gray-300 rounded-md  flex justify-between">
+            <div className="p-4 border border-border rounded-md  flex justify-between">
               <div className="flex flex-col items-start gap-2">
-                <div className="flex items-center gap-1 text-gray-700">
+                <div className="flex items-center gap-1 text-secondary">
                   <img src="https://img.icons8.com/color/48/bank-card-back-side.png" alt="" className="w-[30px]" />
                   {savedCard?.brand?.toUpperCase()}
                   <div className="flex items-center !text-[8px] h-full">
@@ -325,10 +326,10 @@ const Checkout = () => {
                   </div>
                   {savedCard.last4}
                 </div>
-                <p className="text-gray-600 capitalize">Funding Type: {savedCard.funding}</p>
+                <p className="text-secondary capitalize">Funding Type: {savedCard.funding}</p>
               </div>
               <div className="flex flex-col items-end gap-2">
-                <p className="text-gray-700">Exp: {savedCard.exp_month}/{savedCard.exp_year}</p>
+                <p className="text-secondary">Exp: {savedCard.exp_month}/{savedCard.exp_year}</p>
                 <Button
                   variant="secondary"
                   action={handleCardChange}
@@ -343,7 +344,7 @@ const Checkout = () => {
             <Elements
               key={clientSecret}
               stripe={stripePromise}
-              options={{ clientSecret, appearance: { theme: "stripe" } }}
+              options={{ clientSecret, appearance: { theme: theme ? 'night' : "stripe" } }}
             >
               <CheckoutForm clientSecret={clientSecret} handleCardSaved={handleCardSaved} />
             </Elements>

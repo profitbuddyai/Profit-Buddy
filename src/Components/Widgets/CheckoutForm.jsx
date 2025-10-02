@@ -1,9 +1,10 @@
 import { PaymentElement, useElements, useStripe } from "@stripe/react-stripe-js";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { authClient } from "../../Services/Axios";
 import { useState } from "react";
+import Button from "../Controls/Button";
 
 const CheckoutForm = ({ clientSecret, handleCardSaved, planName, eligibleForTrial }) => {
     const stripe = useStripe();
@@ -49,14 +50,23 @@ const CheckoutForm = ({ clientSecret, handleCardSaved, planName, eligibleForTria
     if (clientSecret) {
         return (
             <form onSubmit={handleSubmit}>
-                <PaymentElement className="mb-6" />
-                <button
+                <PaymentElement className="mb-6" options={{ layout: { type: "tabs" } }} />
+                {/* <button
                     type="submit"
                     disabled={isProcessing || !stripe || !elements}
                     className="w-full py-3 bg-black cursor-pointer text-white text-lg font-semibold rounded-md"
                 >
                     {isProcessing ? "Processing Card..." : "Proceed To Pay"}
-                </button>
+                </button> */}
+                <Button
+                    disabled={isProcessing || !stripe || !elements}
+                    label={"Proceed To Pay"}
+                    loading={isProcessing}
+                    type="submit"
+                    variant="secondary"
+                    size="large"
+                    className="w-full mt-4"
+                />
             </form>
         );
     }
