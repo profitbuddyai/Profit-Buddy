@@ -20,6 +20,7 @@ import PopupMenu from "../Components/Controls/PopupMenu";
 import { HiOutlineCreditCard } from "react-icons/hi2";
 import CheckoutForm from "../Components/Widgets/CheckoutForm";
 import { dispatch } from "../Redux/Store";
+import RenderPaymentMethod from "../Components/Widgets/RenderPaymentMethod";
 
 const stripePromise = loadStripe(VITE_STRIPE_PUBLISHABLE_KEY);
 
@@ -46,9 +47,12 @@ const Checkout = () => {
     checkEligibility();
   }, [])
 
-  const handleCardSaved = (paymentMethod) => {
+  const handleCardSaved = async (paymentMethod) => {
+    console.log("Payment Method Saved:", paymentMethod);
+    
     setSavedCard(paymentMethod);
     setClientSecret(null);
+    await handleSubscribe(paymentMethod); // pass directly
   };
 
   useEffect(() => {
@@ -74,7 +78,9 @@ const Checkout = () => {
     try {
       setLoading(true)
       const { data } = await authClient.get("/get/defualt-payment-method");
-      setSavedCard(data.paymentMethod.card);
+      const defaultPaymentMethod = data.paymentMethod;
+      if (!defaultPaymentMethod) return setSavedCard(null);
+      setSavedCard(defaultPaymentMethod);
     } catch (err) {
       await handleCardChange()
       setSavedCard(null);
@@ -106,7 +112,6 @@ const Checkout = () => {
     try {
       const response = await verifyCoupon({ couponCode: coupon });
       if (!eligibleForTrial) {
-        setCouponCode(null)
         setCouponData({ valid: false, code: "" });
         return toast.error("You are not eligible for a free trial. because you have already subscribed before.");
       } else {
@@ -116,10 +121,10 @@ const Checkout = () => {
           setCouponData({ valid: false, code: "" });
         }
         toast.success(response.message);
+        setCouponCode('');
       }
     } catch (err) {
       toast.error(err.response?.data?.message || err.message);
-      setCouponCode(null)
       setCouponData({ valid: false, code: "" });
     } finally {
       setCouponLoading(false);
@@ -139,12 +144,12 @@ const Checkout = () => {
     }
   }
 
-  const handleSubscribe = async () => {
+  const handleSubscribe = async (paymentMethod) => {
     if (!selectedPlanName) {
       toast.error("Please select a plan.");
       return;
     }
-    if (!savedCard) {
+    if (!paymentMethod) {
       toast.error("Please add a valid payment method.");
       return;
     }
@@ -316,28 +321,35 @@ const Checkout = () => {
 
         <div className="w-full max-w-[600px] p-4 bg-primary rounded-lg border border-border">
           {savedCard ? (
-            <div className="p-4 border border-border rounded-md  flex justify-between">
-              <div className="flex flex-col items-start gap-2">
-                <div className="flex items-center gap-1 text-secondary">
-                  <img src="https://img.icons8.com/color/48/bank-card-back-side.png" alt="" className="w-[30px]" />
-                  {savedCard?.brand?.toUpperCase()}
-                  <div className="flex items-center !text-[8px] h-full">
-                    <GoDotFill /> <GoDotFill /><GoDotFill /><GoDotFill />
-                  </div>
-                  {savedCard.last4}
-                </div>
-                <p className="text-secondary capitalize">Funding Type: {savedCard.funding}</p>
-              </div>
-              <div className="flex flex-col items-end gap-2">
-                <p className="text-secondary">Exp: {savedCard.exp_month}/{savedCard.exp_year}</p>
-                <Button
-                  variant="secondary"
-                  action={handleCardChange}
-                  loading={cardChangeLoading}
-                  label="Change Card"
-                />
-              </div>
-            </div>
+            // <div className="p-4 border border-border rounded-md  flex justify-between">
+            //   <div className="flex flex-col items-start gap-2">
+            //     <div className="flex items-center gap-1 text-secondary">
+            //       <img src="https://img.icons8.com/color/48/bank-card-back-side.png" alt="" className="w-[30px]" />
+            //       {savedCard?.brand?.toUpperCase()}
+            //       <div className="flex items-center !text-[8px] h-full">
+            //         <GoDotFill /> <GoDotFill /><GoDotFill /><GoDotFill />
+            //       </div>
+            //       {savedCard.last4}
+            //     </div>
+            //     <p className="text-secondary capitalize">Funding Type: {savedCard.funding}</p>
+            //   </div>
+            //   <div className="flex flex-col items-end gap-2">
+            //     <p className="text-secondary">Exp: {savedCard.exp_month}/{savedCard.exp_year}</p>
+            //     <Button
+            //       variant="secondary"
+            //       action={handleCardChange}
+            //       loading={cardChangeLoading}
+            //       label="Change Card"
+            //     />
+            //   </div>
+            // </div>
+            <>
+              <RenderPaymentMethod
+                onChangeCard={handleCardChange}
+                savedCard={savedCard}
+                loading={cardChangeLoading}
+              />
+            </>
           ) : null}
 
           {clientSecret && (
@@ -352,10 +364,10 @@ const Checkout = () => {
 
           {savedCard && (
             <Button
-              disabled={cardChangeLoading}
+              disabled={cardChangeLoading || subscribeLoading}
               label="Subscribe Now"
               loading={subscribeLoading}
-              action={handleSubscribe}
+              action={() => handleSubscribe(savedCard)}
               variant="secondary"
               size="large"
               className="w-full mt-4"

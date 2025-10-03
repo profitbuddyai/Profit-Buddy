@@ -64,6 +64,7 @@ const SubscriptionTab = () => {
         if (!subscription) return "No active subscription";
         if (subscription.status === "active") return "Active";
         if (subscription.status === "canceled") return "Canceled";
+        if (subscription.status === "trialing") return "Trialing";
         return subscription.status;
     };
 
@@ -86,7 +87,7 @@ const SubscriptionTab = () => {
                 <div className="flex justify-between items-center">
                     <p className="text-base  text-secondary/80">Status</p>
                     <p className={`text-base  px-3 rounded-full ${subscriptionStatus() === "Active" ? "text-green-500 bg-green-500/20" :
-                        subscriptionStatus() === "Canceled" ? "text-red-500 bg-red-500/20" : "text-yellow-500 bg-yellow-500/20"
+                        subscriptionStatus() === "Canceled" ? "text-red-500 bg-red-500/20" : subscriptionStatus() === "Trialing" ? "text-blue-500 bg-blue-500/20":"text-yellow-500 bg-yellow-500/20"
                         }`}>
                         {subscriptionStatus()}
                     </p>
