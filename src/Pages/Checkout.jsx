@@ -112,7 +112,6 @@ const Checkout = () => {
     try {
       const response = await verifyCoupon({ couponCode: coupon });
       if (!eligibleForTrial) {
-        setCouponCode(null)
         setCouponData({ valid: false, code: "" });
         return toast.error("You are not eligible for a free trial. because you have already subscribed before.");
       } else {
@@ -122,10 +121,10 @@ const Checkout = () => {
           setCouponData({ valid: false, code: "" });
         }
         toast.success(response.message);
+        setCouponCode('');
       }
     } catch (err) {
       toast.error(err.response?.data?.message || err.message);
-      setCouponCode(null)
       setCouponData({ valid: false, code: "" });
     } finally {
       setCouponLoading(false);
