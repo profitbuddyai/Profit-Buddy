@@ -1,4 +1,5 @@
 import { NODE_ENV } from '../../config';
+import LinkIcon from '../Assets/Profit Buddy AI/cropped_circle_image.png';
 
 export const Project_Name = 'profit buddy';
 
@@ -47,6 +48,8 @@ export const IconImages = {
   amazon: 'https://img.icons8.com/color/96/amazon.png',
   sheets: 'https://img.icons8.com/fluency/96/google-sheets--v1.png',
   robot: 'https://img.icons8.com/fluency/96/message-bot.png',
+  card: 'https://img.icons8.com/color/48/bank-card-back-side.png',
+  link: LinkIcon,
 };
 
 export const ScaleFactors = {

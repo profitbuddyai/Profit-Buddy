@@ -6,12 +6,10 @@ import { authClient } from "../../Services/Axios";
 import { useState } from "react";
 import Button from "../Controls/Button";
 
-const CheckoutForm = ({ clientSecret, handleCardSaved, planName, eligibleForTrial }) => {
+const CheckoutForm = ({ clientSecret, handleCardSaved }) => {
     const stripe = useStripe();
     const elements = useElements();
     const [isProcessing, setIsProcessing] = useState(false);
-    const dispatch = useDispatch();
-    const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -34,10 +32,10 @@ const CheckoutForm = ({ clientSecret, handleCardSaved, planName, eligibleForTria
                     paymentMethodId: setupIntent.payment_method,
                 });
                 if (data.success) {
-                    toast.success("Card saved as default!");
-                    handleCardSaved(data?.paymentMethod?.card)
+                    // toast.success("Method saved as default!");
+                    handleCardSaved(data?.paymentMethod)
                 } else {
-                    toast.error("Failed to set default card.");
+                    toast.error("Failed to save payment method.");
                 }
             }
         } catch (err) {
@@ -51,16 +49,9 @@ const CheckoutForm = ({ clientSecret, handleCardSaved, planName, eligibleForTria
         return (
             <form onSubmit={handleSubmit}>
                 <PaymentElement className="mb-6" options={{ layout: { type: "tabs" } }} />
-                {/* <button
-                    type="submit"
-                    disabled={isProcessing || !stripe || !elements}
-                    className="w-full py-3 bg-black cursor-pointer text-white text-lg font-semibold rounded-md"
-                >
-                    {isProcessing ? "Processing Card..." : "Proceed To Pay"}
-                </button> */}
                 <Button
                     disabled={isProcessing || !stripe || !elements}
-                    label={"Proceed To Pay"}
+                    label={"Subscribe Now"}
                     loading={isProcessing}
                     type="submit"
                     variant="secondary"
