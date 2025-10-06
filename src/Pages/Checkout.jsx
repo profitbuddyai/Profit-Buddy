@@ -189,7 +189,7 @@ const Checkout = () => {
 
   return (
     <div className="bg-lBackground min-h-screen flex justify-center items-start py-12 px-6 gap-8">
-      <div className="flex gap-10 w-full max-w-[1000px]">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-10 w-full max-w-[1000px]">
 
         <div className="w-full relative p-6 bg-primary border border-border rounded-lg flex flex-col gap-4 h-max">
 
@@ -221,7 +221,7 @@ const Checkout = () => {
             </div>
             {eligibleForTrial && (
               <div className="flex justify-between">
-                <span className="text-secondary">Free Trial:</span>
+                <span className="text-secondary text-nowrap">Free Trial:</span>
                 <span className="font-medium text-secondary">
                   {couponData.valid
                     ? `(${couponData.code}) 30 Days Free Trial`
@@ -231,10 +231,10 @@ const Checkout = () => {
             )}
 
             <div className="flex justify-between">
-              <span className="text-secondary">
+              <span className="text-secondary text-nowrap">
                 {eligibleForTrial ? "Trial Period:" : "Subscription Period:"}
               </span>
-              <span className="text-secondary text-sm flex items-center gap-2">
+              <span className="text-secondary text-sm flex items-center flex-wrap justify-end gap-2">
                 {formatDate(new Date())}, {formatYear(new Date())}
                 <GoDash />
                 {eligibleForTrial ? (
@@ -301,7 +301,7 @@ const Checkout = () => {
             />
             {eligibleForTrial && (
               <div className="w-full">
-                <p className="text-sm text-red-500 bg-red-500/10 w-full p-2 rounded">
+                <p className="text-sm text-red-500 bg-red-500/15 w-full p-2 rounded">
                   Note: Actual payment will be automatically charged on{' '}
                   {formatDate(
                     new Date(
@@ -319,7 +319,7 @@ const Checkout = () => {
           </>
         </div>
 
-        <div className="w-full max-w-[600px] p-4 bg-primary rounded-lg border border-border">
+        <div className="w-full p-4 bg-primary rounded-lg border border-border">
           {savedCard ? (
             // <div className="p-4 border border-border rounded-md  flex justify-between">
             //   <div className="flex flex-col items-start gap-2">

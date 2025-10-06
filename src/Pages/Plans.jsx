@@ -83,7 +83,7 @@ const Plans = () => {
         <AnimationWrapper>
             <div className="bg-lBackground flex flex-col gap-8 items-center py-10 px-4">
 
-                <div className="flex items-center  gap-4 justify-between w-full max-w-[700px]">
+                <div className="flex items-center  gap-4 justify-center w-full">
 
                     <ToggleSwitch
                         options={[{ label: 'Monthly', value: 'Monthly' }, { label: 'Yearly (40% OFF)', value: 'Yearly' }]}
@@ -99,7 +99,7 @@ const Plans = () => {
                     </button> */}
 
                 </div>
-                <div className="flex gap-9 w-full justify-center items-center">
+                <div className="flex flex-wrap gap-9 w-full justify-center items-center">
                     {Object.values(SUBSCRIPTION_PLANS_DATA)
                         .filter(plan => plan.type.toLowerCase() === billingCycle.toLowerCase()) // only monthly/yearly
                         .map((plan) => {

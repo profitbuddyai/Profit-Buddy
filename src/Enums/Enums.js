@@ -38,7 +38,10 @@ export const SalesConfig = [
   { name: 'BuyBox', key: 'buybox', color: '#ff00b4', lightColor: '#facfed', symbol: '$', strokeWidth: 2, decimal: true, notFoundText: 'Suppressed' },
 ];
 
-export const OfferCountConfig = [{ name: 'Offer Count', key: 'offerCount', color: '#8888dd', lightColor: '#f0f0fb', symbol: '', strokeWidth: 2, decimal: false }];
+export const OfferCountConfig = [
+  { name: 'Offer Count', key: 'offerCount', color: '#8888dd', lightColor: '#f0f0fb', symbol: '', strokeWidth: 2, decimal: false },
+  { name: 'Monthly Sold', key: 'monthlySold', color: '#f6d500', lightColor: '#fff3a8', symbol: '', strokeWidth: 2,axis: 'y2', decimal: false },
+];
 
 //Icon Images
 export const IconImages = {

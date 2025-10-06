@@ -17,8 +17,8 @@ import { formatNumberWithCommas } from '../../Utils/NumberUtil';
 const SellerInfo = ({ className, seller, handleFilterClick, queryFilter, sellerRevenue, sellerRevenueLoading }) => {
     const { theme } = useSelector((state) => state.system);
     return (
-        <div className={`grid grid-cols-4 gap-4 h-auto items-start text-secondary ${className}`}>
-            <CustomCard className={'col-span-2'} label={'Seller Info'}>
+        <div className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 h-auto items-start text-secondary ${className}`}>
+            <CustomCard className={'sm:col-span-2'} label={'Seller Info'}>
                 <div className='flex items-start justify-between gap-2'>
                     <div>
                         <p className='text-2xl font-semibold break-all'>{seller?.name}</p>
@@ -58,7 +58,7 @@ const SellerInfo = ({ className, seller, handleFilterClick, queryFilter, sellerR
                 </div>
             </CustomCard >
 
-            <CustomCard className={'col-span-1'} label={'Categories'}>
+            <CustomCard className={'sm:col-span-1'} label={'Categories'}>
                 <div className='flex flex-col gap-4 max-h-[180px] overflow-auto customScroll pr-2'>
                     {seller?.categories?.map((category, idx) => (
                         <div key={idx} className='flex justify-between items-center bg-border/50 rounded-md py-2 px-3'>
@@ -69,7 +69,7 @@ const SellerInfo = ({ className, seller, handleFilterClick, queryFilter, sellerR
                 </div>
             </CustomCard>
 
-            <CustomCard className={'col-span-1'} label={'Brands'}>
+            <CustomCard className={'sm:col-span-1'} label={'Brands'}>
                 <div className='flex flex-col gap-4 max-h-[180px] overflow-auto customScroll pr-2'>
                     {seller?.brands?.map((brand, idx) => (
                         <div key={idx} className='flex justify-between items-center bg-border/50 rounded-md py-2 px-3'>

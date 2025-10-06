@@ -179,8 +179,7 @@ export default function CustomTooltip({ rect, points, visible, configs, size = '
 
     return (
         <div style={containerStyle} className="pointer-events-none  origin-top-left transition-all ">
-            {configs.length !== 1 && (
-
+            {configs?.[0]?.name !== "Offer Count" && (
                 <div style={{
                     position: 'absolute',
                     left: points?.xPixel - 60,

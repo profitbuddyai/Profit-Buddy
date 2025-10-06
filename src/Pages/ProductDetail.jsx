@@ -133,7 +133,7 @@ const ProductDetail = () => {
                     </AnimationWrapper>
                     
                     <AnimationWrapper>
-                        <CustomCard label={"Store Spy"}>
+                        <CustomCard label={"AI Store Spy"}>
                             <TopOffers product={product} productOffers={productOffers} offerLoading={offerLoading} />
                         </CustomCard>
                     </AnimationWrapper>

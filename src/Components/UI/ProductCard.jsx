@@ -5,8 +5,6 @@ import { formatNumberWithCommas } from '../../Utils/NumberUtil'
 import { calculateEstimatSellerAsinRevenue, calculateMaxCost, calculateProfit, calculateTotalFees } from '../../Utils/CalculationUtils'
 import { abbreviateNumber } from './../../Utils/NumberUtil';
 import { Link } from 'react-router-dom'
-import DynamicChart from './DynamicChart'
-import { OfferGraphKeys, SalesGraphKeys } from '../../Enums/Enums'
 import ProductImageGrid from './ProductImageGrid'
 import { FiLoader } from 'react-icons/fi'
 import { Tooltip } from 'react-tooltip'
@@ -126,7 +124,7 @@ const ProductCard = ({ product }) => {
               <div className="hidden md:flex flex-col border-[1.5px] border-accent w-[200px] rounded-lg bg-accent/5 h-[260px] overflow-hidden">
                 <div className='text-sm px-3 py-2 flex justify-center items-center text-start bg-accent/60 text-secondary font-medium rounded-t-md w-full'>
                   <p className="">
-                    Store Spy
+                    AI Store Spy
                   </p>
                   {/* <p className="flex gap-2 items-center px-1 font-normal">
                     See All <FaArrowRightLong/>

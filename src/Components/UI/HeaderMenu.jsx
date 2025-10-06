@@ -56,7 +56,7 @@ const HeaderMenu = ({ isSubscribed = true }) => {
                         size="medium"
                         variant="accent"
                         corner="full"
-                        label={<div className="flex gap-2 items-center"><TbSpy size={18} /> Store Spy</div>}
+                        label={<div className="flex gap-2 items-center"><TbSpy size={18} />AI Store Spy</div>}
                         action={() => setModalOpen(!modalOpen)}
                     />
                 )}
@@ -114,7 +114,7 @@ const HeaderMenu = ({ isSubscribed = true }) => {
                     data={[
                         ...(isSubscribed ? [{
                             icon: <TbSpy size={18} />,
-                            name: 'Store Spy',
+                            name: 'AI Store Spy',
                             action: () => setModalOpen(!modalOpen),
                         }] : []),
                         {
@@ -136,17 +136,16 @@ const HeaderMenu = ({ isSubscribed = true }) => {
                 />
             </div>
 
-            {/* Store Spy Modal */}
             {isSubscribed && (
                 <Modal
                     isOpen={modalOpen}
                     setIsOpen={setModalOpen}
-                    label='Store Spy'
+                    label='AI Store Spy'
                     subText="Enter a Seller ID to find and analyze store details, including products, performance, and other insights."
                     actions={
                         <>
                             <Button label='Cancel' size='medium' variant='outline' action={() => setModalOpen(false)} />
-                            <Button type='submit' label='Store Spy' size='medium' variant='secondary' action={handleSubmit} />
+                            <Button type='submit' label='AI Store Spy' size='medium' variant='secondary' action={handleSubmit} />
                         </>
                     }
                 >

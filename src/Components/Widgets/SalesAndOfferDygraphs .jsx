@@ -56,7 +56,10 @@ const SalesAndOfferDygraphs = ({ graphData, productInfo, currentFilter, setCurre
         const offerData = graphData.map(d => [
             new Date(d.date),
             d.offerCount ?? null,
+            d.monthlySold ?? null,
         ]);
+        console.log(offerData);
+        
 
         let interactionModel = {
             ...Dygraph.defaultInteractionModel,
@@ -147,7 +150,7 @@ const SalesAndOfferDygraphs = ({ graphData, productInfo, currentFilter, setCurre
             gridLinePattern: [],
             highlightCircleSize: 0,
             gridLineColor: '#cccccc',
-            rightGap: 90,
+            // rightGap: 90,
             // yRangePad: 25,
             legend: 'never',
             colors: OfferCountConfig.map(s => s.color),
@@ -173,6 +176,15 @@ const SalesAndOfferDygraphs = ({ graphData, productInfo, currentFilter, setCurre
                     axisLineWidth: 0.1,
                     valueFormatter: v => Math.round(v).toLocaleString(),
                     axisLabelFormatter: v => Math.round(v).toLocaleString(),
+                },
+                y2: {
+                    axisLabel: 'Monthly Sold',
+                    axisLabelWidth: 80,
+                    axisLineColor: 'transparent',
+                    axisLineWidth: 0.1,
+                    independentTicks: true,
+                    valueFormatter: v => '#' + Number(v).toLocaleString(),
+                    axisLabelFormatter: v => '#' + Number(v).toLocaleString()
                 },
                 x: {
                     drawAxis: true,
@@ -230,7 +242,7 @@ const SalesAndOfferDygraphs = ({ graphData, productInfo, currentFilter, setCurre
                 });
 
                 offerGraph.updateOptions({
-                    file: offerData.slice(0, nextI).map(row => [row[0], row[1] ?? null])
+                    file: offerData.slice(0, nextI)
                 });
             }
 

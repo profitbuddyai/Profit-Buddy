@@ -24,7 +24,7 @@ const ProductImageGrid = ({ images = [], listPrice = 0 , className }) => {
         //     }}
         // >
 
-            <div className={`relative w-[220px] max-w-[220px] h-auto min-h-full bg-white border border-border rounded-[8px] overflow-hidden p-1 ${className}`}>
+            <div className={`relative w-[220px] max-w-[220px] h-auto bg-white border border-border rounded-[8px] overflow-hidden p-1 ${className}`}>
                 <img
                     src={mainImage || placeholder}
                     alt="product"
