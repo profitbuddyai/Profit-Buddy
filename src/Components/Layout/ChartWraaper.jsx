@@ -4,9 +4,11 @@ import { isEqual } from 'lodash';
 import { toast } from 'react-toastify';
 import SalesAndOfferDygraphs from '../Widgets/SalesAndOfferDygraphs ';
 
-const ChartWraaper = ({ product, size = 'large', className = '' }) => {
+const ChartWraaper = ({ product, size = 'large', buyboxSellerHistory = [], sellerData = {}, className = '' }) => {
     const { asin, historyLength } = product || {};
     const { keepaGraphData } = product?.graphData || {};
+    console.log(buyboxSellerHistory, sellerData);
+
 
     const [graphData, setGraphData] = useState([]);
     const [formattedGraphData, setFormattedGraphData] = useState([]);
@@ -53,6 +55,8 @@ const ChartWraaper = ({ product, size = 'large', className = '' }) => {
                     setCurrentFilter={setCurrentFilter}
                     size={size}
                     totalDays={historyLength}
+                    buyboxSellerHistory={buyboxSellerHistory}
+                    sellerData={sellerData}
                 />
             ) : (
                 <div className="flex justify-center items-center h-[300px] text-gray-500">
@@ -64,10 +68,12 @@ const ChartWraaper = ({ product, size = 'large', className = '' }) => {
 };
 
 export default React.memo(ChartWraaper, (prevProps, nextProps) => {
-    return (
-        prevProps.product.asin === nextProps.product.asin &&
-        prevProps.size === nextProps.size &&
-        prevProps.className === nextProps.className &&
-        isEqual(prevProps.product?.graphData?.keepaGraphData, nextProps.product?.graphData?.keepaGraphData)
-    );
+  return (
+    prevProps.product.asin === nextProps.product.asin &&
+    prevProps.size === nextProps.size &&
+    prevProps.className === nextProps.className &&
+    isEqual(prevProps.product?.graphData?.keepaGraphData, nextProps.product?.graphData?.keepaGraphData) &&
+    isEqual(prevProps.buyboxSellerHistory, nextProps.buyboxSellerHistory) &&
+    isEqual(prevProps.sellerData, nextProps.sellerData)
+  );
 });

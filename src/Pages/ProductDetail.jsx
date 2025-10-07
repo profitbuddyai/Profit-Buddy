@@ -6,18 +6,16 @@ import { useDispatch, useSelector } from 'react-redux';
 import TopOffers from '../Components/Widgets/TopOffers';
 import BasicInfo from '../Components/Widgets/BasicInfo';
 import CustomCard from '../Components/UI/CustomCard';
-import { getProduct, searchProducts } from '../Apis/Product';
+import { getProduct } from '../Apis/Product';
 import { FiLoader } from "react-icons/fi";
 import { MdOutlineSearchOff } from "react-icons/md";
 import { getProductOffers } from '../Apis/Offer';
 import AnimationWrapper from '../Components/Layout/AnimationWrapper';
 import SellerCentral from '../Components/Widgets/SellerCentral';
-import SalesAndOfferDygraphs from '../Components/Widgets/SalesAndOfferDygraphs ';
 import ChartWraaper from '../Components/Layout/ChartWraaper';
 import ChatBuddy from '../Components/Widgets/ChatBuddy';
 import { upsertHistory } from '../Apis/History';
 import { debounce } from 'lodash';
-import ScoreChart from '../Components/UI/ScoreChart';
 
 
 const ProductDetail = () => {
@@ -27,6 +25,8 @@ const ProductDetail = () => {
     const [loading, setLoading] = useState(false);
     const [offerLoading, setOfferLoading] = useState(false);
     const [productOffers, setProductOffers] = useState(null);
+    const [buyboxSellerIds, setBuyboxSellerIds] = useState(null);
+    const [sellerData, setSellerData] = useState(null);
 
     const dispatch = useDispatch();
     const { products } = useSelector((state) => state.products);
@@ -68,14 +68,14 @@ const ProductDetail = () => {
             setOfferLoading(true);
             const responce = await getProductOffers(asin);
             setProductOffers(responce?.offer);
+            setBuyboxSellerIds(responce?.buyBoxSellerHistory);
+            setSellerData(responce?.sellerData);
         } catch (error) {
             console.error("Failed to fetch offers:", error);
         } finally {
             setOfferLoading(false);
         }
     };
-
-
 
     useEffect(() => {
         if (!asin) return;
@@ -128,16 +128,16 @@ const ProductDetail = () => {
 
                     <AnimationWrapper>
                         <CustomCard label={'Graphs'}>
-                            <ChartWraaper product={product} size='large' />
+                            <ChartWraaper product={product} size='large' buyboxSellerHistory={buyboxSellerIds} sellerData={sellerData} />
                         </CustomCard>
                     </AnimationWrapper>
-                    
+
                     <AnimationWrapper>
                         <CustomCard label={"AI Store Spy"}>
                             <TopOffers product={product} productOffers={productOffers} offerLoading={offerLoading} />
                         </CustomCard>
                     </AnimationWrapper>
-                    
+
                 </div>
 
                 <div className='lg:col-span-2 flex flex-col gap-4'>
@@ -156,7 +156,7 @@ const ProductDetail = () => {
                             <ChatBuddy />
                         </CustomCard>
                     </AnimationWrapper>
-                    
+
 
                 </div>
             </div>

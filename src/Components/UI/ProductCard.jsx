@@ -39,7 +39,7 @@ const ProductCard = ({ product }) => {
   }
 
   useEffect(() => {
-    const timeout = setTimeout(() => setShowChart(true), 500);
+    const timeout = setTimeout(() => setShowChart(true), 0);
     return () => clearTimeout(timeout);
   }, []);
 
@@ -190,9 +190,9 @@ const ProductCard = ({ product }) => {
             }} className='hidden lg:flex  gap-0 pl-[10px] max-w-[500px] max-h-[460px] overflow-hidden items-start h-full  rounded-lg '>
 
               <div className='max-w-[750px] min-w-[750px] h-max overflow-hidden flex items-end  justify-end  '>
-                {showChart && (
-                  <ChartWraaper product={product} className=' origin-top-left' size='small' />
-                )}
+                {/* {showChart && ( */}
+                  <ChartWraaper product={product} className='origin-top-left' size='small' />
+                {/* )} */}
               </div>
 
             </div>

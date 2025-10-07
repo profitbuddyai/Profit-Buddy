@@ -10,7 +10,7 @@ import PopupMenu from '../Controls/PopupMenu';
 import { IoFilter } from 'react-icons/io5';
 import { OfferCountConfig, SalesConfig, ScaleFactors } from '../../Enums/Enums';
 
-const SalesAndOfferDygraphs = ({ graphData, productInfo, currentFilter, setCurrentFilter, loading, size = 'large', totalDays }) => {
+const SalesAndOfferDygraphs = ({ graphData, productInfo, currentFilter, setCurrentFilter, loading, size = 'large', totalDays , buyboxSellerHistory=[], sellerData={}}) => {
 
     if (!graphData?.length) return (
         <div className=" w-full border border-border !h-full min-h-[240px] flex flex-col gap-0 items-center justify-center bg-primary">
@@ -58,8 +58,6 @@ const SalesAndOfferDygraphs = ({ graphData, productInfo, currentFilter, setCurre
             d.offerCount ?? null,
             d.monthlySold ?? null,
         ]);
-        console.log(offerData);
-        
 
         let interactionModel = {
             ...Dygraph.defaultInteractionModel,
@@ -361,7 +359,7 @@ const SalesAndOfferDygraphs = ({ graphData, productInfo, currentFilter, setCurre
                     ))}
                 </ul>
                 <div ref={salesRef} className='origin-top-left' style={{ width: '100%', height: size === 'small' ? '240px' : '260px', transform: `scale(${scaleFactor})`, }} />
-                <CustomTooltip {...salesTooltipData} configs={SalesConfig} size={size} />
+                <CustomTooltip {...salesTooltipData} configs={SalesConfig} size={size} buyboxSellerHistory={buyboxSellerHistory} sellerData={sellerData} />
             </div >
 
             <div className={`bg-white py-2 rounded-lg z-10 ${size === 'small' ? 'max-h-[210px]' : 'mt-6'}`}>

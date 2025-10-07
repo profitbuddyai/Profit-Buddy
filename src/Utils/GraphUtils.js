@@ -72,7 +72,7 @@ export const formatDate = (date = '') => {
 export const formatTime = (date = '') => {
   if (!date) return;
   const locale = 'en-US';
-  const timeFormatOptions = { hour: '2-digit',   hour12: false, minute: '2-digit' };
+  const timeFormatOptions = { hour: '2-digit', hour12: false, minute: '2-digit' };
 
   return new Date(date).toLocaleTimeString(locale, timeFormatOptions);
 };
@@ -203,4 +203,25 @@ export const lightenColor = (hex, amount = 0.7) => {
   b = Math.round(b + (255 - b) * amount);
 
   return `rgb(${r}, ${g}, ${b})`;
+};
+
+export const getSellerByTimestamp = (targetTimestamp, history, sellerData) => {
+  console.log(targetTimestamp , history , sellerData);
+  
+  if (!Array.isArray(history) || history.length === 0) return null;
+
+  const sorted = [...history].sort((a, b) => a.date - b.date);
+
+  if (targetTimestamp < sorted[0].date) return null;
+
+  let result = null;
+  for (const record of sorted) {
+    if (record.date <= targetTimestamp) {
+      result = record;
+    } else {
+      break;
+    }
+  }
+
+  return sellerData?.[result?.sellerId] ?? null;
 };

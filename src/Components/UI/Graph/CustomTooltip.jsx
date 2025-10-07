@@ -1,68 +1,61 @@
 import React from 'react';
-import { formatDate, formatTime, formatYear, lightenColor } from '../../../Utils/GraphUtils';
+import { formatDate, formatTime, formatYear, getSellerByTimestamp, lightenColor } from '../../../Utils/GraphUtils';
 import { formatNumberWithCommas } from '../../../Utils/NumberUtil';
 import { ScaleFactors } from '../../../Enums/Enums';
+import { FaStar } from 'react-icons/fa';
 
 // A CustomTooltip that assigns up to 4 tooltips to the four quadrants
 // (top-left, top-right, bottom-left, bottom-right) and tries to avoid
 // overlaps. Connector lines are drawn from the data point to the tooltip.
 
 
-export default function CustomTooltip({ rect, points, visible, configs, size = 'large' }) {
+export default function CustomTooltip({ rect, points, visible, configs, size = 'large', sellerData, buyboxSellerHistory }) {
 
     const scaleFactor = ScaleFactors?.[size] || 1
-    
+
     if (!visible || !points) return null;
     if (!rect) return null;
+    if (!points.data || !Array.isArray(points.data)) return null;
 
     const chartW = rect.width;
     const chartH = rect.height;
-    // if (points?.xPixel > chartW - 95 || points?.xPixel < 88) return;
+
     const containerStyle = {
         position: 'absolute',
-        // top:0,
-        // left:0,
         left: Math.round(rect.left + window.scrollX),
         top: Math.round(rect.top + window.scrollY),
         width: Math.round(chartW),
         height: Math.round(chartH),
         pointerEvents: 'none',
         zIndex: 1000,
-        // backgroundColor:'red',
     };
 
-    // Tooltip size (keep in sync with your classes)
-    const TT_W = 80 * scaleFactor;
-    const TT_H = 43 * scaleFactor;
-    const GAP = 6; // minimal gap when nudging
+    const BASE_TT_W = 80;
+    const BASE_TT_H = 43;
+    const GAP = 6;
+    const MARGIN = 20 * scaleFactor;
 
-    // helper: compute clamped canvas px/py (same as your original logic)
     const normalizePoint = (p) => {
-        const px = Math.max((20 * scaleFactor), Math.min(chartW - 0, Math.round(points?.xPixel)));
-        const py = Math.max((20 * scaleFactor), Math.min(chartH - 0, Math.round(p.canvasy)));
+        const px = Math.max(MARGIN, Math.min(chartW - MARGIN, Math.round(points?.xPixel)));
+        const py = Math.max(MARGIN, Math.min(chartH - MARGIN, Math.round(p.canvasy)));
         return { px, py };
     };
 
-    // map quadrant -> function that returns {left, top} for tooltip placement
-    const quadrantPlacement = {
+    const quadrantPlacement = (TT_W, TT_H) => ({
         'top-left': (x, y) => ({ left: x - TT_W - (20 * scaleFactor), top: y - TT_H - (20 * scaleFactor) }),
         'top-right': (x, y) => ({ left: x + (20 * scaleFactor), top: y - TT_H - (20 * scaleFactor) }),
         'bottom-left': (x, y) => ({ left: x - TT_W - (20 * scaleFactor), top: y + (20 * scaleFactor) }),
         'bottom-right': (x, y) => ({ left: x + (20 * scaleFactor), top: y + (20 * scaleFactor) }),
-    };
+    });
 
-    // ensure we stay inside chart bounds when placing tooltip
-    const clampToChart = ({ left, top }) => {
-        let l = left;
-        let t = top;
-        // keep some padding so tooltip doesn't flush to the exact border
+    // clamp that accepts width/height for accurate clamping
+    const clampToChart = ({ left, top, width = BASE_TT_W * scaleFactor, height = BASE_TT_H * scaleFactor }) => {
         const pad = 4;
-        l = Math.max(pad - 0, Math.min(chartW - TT_W - pad, l));
-        t = Math.max(pad - 0, Math.min(chartH - TT_H - pad, t));
-        return { left: l, top: t };
+        const l = Math.max(pad, Math.min(chartW - width - pad, left));
+        const t = Math.max(pad, Math.min(chartH - height - pad, top));
+        return { left: Math.round(l), top: Math.round(t) };
     };
 
-    // compute preferred quadrant for each point
     const centerX = chartW / 2;
     const centerY = chartH / 2;
 
@@ -74,18 +67,19 @@ export default function CustomTooltip({ rect, points, visible, configs, size = '
         return { raw: p, px, py, preferred };
     });
 
-    // Sort: we give priority to points farther from center so edges get stable spots first
     pts.sort((a, b) => {
         const da = Math.hypot(a.px - centerX, a.py - centerY);
         const db = Math.hypot(b.px - centerX, b.py - centerY);
         return db - da; // descending
     });
 
+    // limit to up to 4 points (we have only 4 quadrants)
+    const limitedPts = pts.slice(0, 4);
+
     const available = new Set(['top-left', 'top-right', 'bottom-left', 'bottom-right']);
     const assigned = [];
 
-    // greedy assignment: pick preferred if free else the quadrant with minimal penalty
-    for (const p of pts) {
+    for (const p of limitedPts) {
         let pick = null;
         if (available.has(p.preferred)) {
             pick = p.preferred;
@@ -94,9 +88,15 @@ export default function CustomTooltip({ rect, points, visible, configs, size = '
             let best = null;
             let bestDist = Infinity;
             for (const q of available) {
-                const pos = quadrantPlacement[q](p.px, p.py);
-                const clamped = clampToChart(pos);
-                const centerOfTooltip = { x: pos.left + TT_W / 2, y: pos.top + TT_H / 2 };
+                // determine tooltip size for this point based on config (so placement uses proper size)
+                const cfgForP = configs?.find(c => c.name === p.raw.name) || {};
+                const isBuybox = cfgForP?.key === 'buybox';
+                const TT_W = (isBuybox ? 140 : 80) * scaleFactor;
+                const TT_H = (isBuybox ? 54 : 40) * scaleFactor;
+
+                const qp = quadrantPlacement(TT_W, TT_H)[q](p.px, p.py);
+                const clamped = clampToChart({ left: qp.left, top: qp.top, width: TT_W, height: TT_H });
+                const centerOfTooltip = { x: qp.left + TT_W / 2, y: qp.top + TT_H / 2 };
                 const dist = Math.hypot(centerOfTooltip.x - p.px, centerOfTooltip.y - p.py);
                 if (dist < bestDist) {
                     bestDist = dist;
@@ -107,55 +107,110 @@ export default function CustomTooltip({ rect, points, visible, configs, size = '
         }
 
         if (pick == null) {
-            // fallback: place at bottom-right (shouldn't happen with up to 4 points)
+            // fallback
             pick = 'bottom-left';
         }
 
         available.delete(pick);
-        const rawPos = quadrantPlacement[pick](p.px, p.py);
-        const clampedPos = clampToChart(rawPos);
-        assigned.push({ ...p, quadrant: pick, left: rawPos.left, top: rawPos.top });
+
+        // determine tooltip size based on config
+        const cfgForP = configs?.find(c => c.name === p.raw.name) || {};
+        const isBuybox = cfgForP?.key === 'buybox';
+        const TT_W_actual = (isBuybox ? 140 : 80) * scaleFactor;
+        const TT_H_actual = (isBuybox ? 54 : 40) * scaleFactor;
+
+        const rawPos = quadrantPlacement(TT_W_actual, TT_H_actual)[pick](p.px, p.py);
+        const clampedPos = clampToChart({ left: rawPos.left, top: rawPos.top, width: TT_W_actual, height: TT_H_actual });
+
+        assigned.push({
+            ...p,
+            quadrant: pick,
+            left: clampedPos.left,
+            top: clampedPos.top,
+            width: TT_W_actual,
+            height: TT_H_actual,
+            cfg: cfgForP,
+        });
     }
 
-    // simple overlap detection and resolution pass
-    function rectsOverlap(a, b) {
-        return !(a.left + TT_W <= b.left || b.left + TT_W <= a.left || a.top + TT_H <= b.top || b.top + TT_H <= a.top);
-    }
+    // robust overlap resolver (iterative)
+    function resolveOverlaps(list, chartW, chartH, GAP = 6, clampFn) {
+        const maxIter = 8;
 
-    // try to resolve overlaps by nudging the *later* (lower-priority) tooltip away
-    for (let i = 0; i < assigned.length; i++) {
-        for (let j = i + 1; j < assigned.length; j++) {
-            const A = assigned[i];
-            const B = assigned[j];
-            if (rectsOverlap(A, B)) {
-                // decide nudge direction: move B away from A along the largest overlap axis
-                const overlapX = Math.min(A.left + TT_W, B.left + TT_W) - Math.max(A.left, B.left);
-                const overlapY = Math.min(A.top + TT_H, B.top + TT_H) - Math.max(A.top, B.top);
+        const rectsOverlap = (a, b) => {
+            return !(a.left + a.width <= b.left ||
+                b.left + b.width <= a.left ||
+                a.top + a.height <= b.top ||
+                b.top + b.height <= a.top);
+        };
 
-                if (overlapX >= overlapY) {
-                    // move horizontally
-                    const shift = TT_W + GAP;
-                    // try move B to the other horizontal side of its point
-                    const tryLeft = B.px - TT_W - GAP;
-                    const tryRight = B.px + GAP;
-                    const canLeft = tryLeft >= 0;
-                    const canRight = tryRight + TT_W <= chartW;
-                    if (canRight) B.left = Math.min(chartW - TT_W - 4, tryRight);
-                    else if (canLeft) B.left = Math.max(4, tryLeft);
-                    else B.left = Math.min(chartW - TT_W - 4, B.left + shift);
-                } else {
-                    // move vertically
-                    const shift = TT_H + GAP;
-                    const tryTop = B.py - TT_H - GAP;
-                    const tryBottom = B.py + GAP;
-                    const canTop = tryTop >= 0;
-                    const canBottom = tryBottom + TT_H <= chartH;
-                    if (canBottom) B.top = Math.min(chartH - TT_H - 4, tryBottom);
-                    else if (canTop) B.top = Math.max(4, tryTop);
-                    else B.top = Math.min(chartH - TT_H - 4, B.top + shift);
+        // make sure centers exist
+        list.forEach(a => {
+            a.centerX = a.left + a.width / 2;
+            a.centerY = a.top + a.height / 2;
+        });
+
+        let iter = 0;
+        while (iter < maxIter) {
+            let moved = false;
+            for (let i = 0; i < list.length; i++) {
+                for (let j = i + 1; j < list.length; j++) {
+                    const A = list[i];
+                    const B = list[j];
+                    if (!rectsOverlap(A, B)) continue;
+
+                    const overlapX = Math.min(A.left + A.width, B.left + B.width) - Math.max(A.left, B.left);
+                    const overlapY = Math.min(A.top + A.height, B.top + B.height) - Math.max(A.top, B.top);
+
+                    let dirX = Math.sign(B.centerX - A.centerX) || 1;
+                    let dirY = Math.sign(B.centerY - A.centerY) || 1;
+
+                    if (overlapX >= overlapY) {
+                        const shift = (overlapX / 2) + GAP;
+                        B.left = B.left + shift * dirX;
+                    } else {
+                        const shift = (overlapY / 2) + GAP;
+                        B.top = B.top + shift * dirY;
+                    }
+
+                    // clamp moved tooltip
+                    const clamped = clampFn({ left: B.left, top: B.top, width: B.width, height: B.height });
+                    if (clamped.left !== B.left || clamped.top !== B.top) {
+                        B.left = clamped.left;
+                        B.top = clamped.top;
+                    }
+
+                    // update centers
+                    B.centerX = B.left + B.width / 2;
+                    B.centerY = B.top + B.height / 2;
+
+                    moved = true;
                 }
             }
+
+            // update centers for all
+            list.forEach(a => {
+                a.centerX = a.left + a.width / 2;
+                a.centerY = a.top + a.height / 2;
+            });
+
+            if (!moved) break;
+            iter++;
         }
+
+        // final clamp pass
+        list.forEach(a => {
+            const clamped = clampFn({ left: a.left, top: a.top, width: a.width, height: a.height });
+            a.left = clamped.left;
+            a.top = clamped.top;
+        });
+
+        return list;
+    }
+
+    // run resolver to avoid collapsed/overlapping tooltips
+    if (assigned.length > 1) {
+        resolveOverlaps(assigned, chartW, chartH, GAP, clampToChart);
     }
 
     const connectorStyle = (sx, sy, tx, ty, color = 'gray') => {
@@ -174,6 +229,7 @@ export default function CustomTooltip({ rect, points, visible, configs, size = '
             transform: `rotate(${angle}rad)`,
             backgroundColor: color,
             pointerEvents: 'none',
+            willChange: 'transform',
         };
     };
 
@@ -195,17 +251,16 @@ export default function CustomTooltip({ rect, points, visible, configs, size = '
             )}
 
             {assigned.map((a, i) => {
-                const cfg = configs?.find(c => c.name === a.raw.name) || {};
+                const cfg = a.cfg || configs?.find(c => c.name === a.raw.name) || {};
                 const color = cfg.color || '#000';
                 const lightColor = cfg.lightColor || '#f8f8f8';
 
-                // tooltip box coordinates are relative to chart top-left (container)
                 const left = Math.round(a.left);
                 const top = Math.round(a.top);
 
-                // connector target: tooltip center
-                const tx = left + TT_W / 2;
-                const ty = top + TT_H / 2;
+                // use per-tooltip width/height for connector target
+                const tx = left + (a.width / 2);
+                const ty = top + (a.height / 2);
                 const sx = Math.round(a.px);
                 const sy = Math.round(a.py);
 
@@ -216,7 +271,7 @@ export default function CustomTooltip({ rect, points, visible, configs, size = '
                         <div style={connStyle} className="rounded-full " />
 
                         <div
-                            className="transition-none ease-linear duration-75 w-[80px] h-[40px] flex flex-col text-sm p-1 shadow border"
+                            className={`transition-none ease-linear duration-75 ${cfg?.key === 'buybox' ? 'w-[140px] h-[54px]' : 'w-[80px] h-[40px]'}  flex flex-col text-sm p-1 shadow border`}
                             style={{
                                 position: 'absolute',
                                 left,
@@ -229,10 +284,13 @@ export default function CustomTooltip({ rect, points, visible, configs, size = '
                                 transform: `scale(${scaleFactor})`,
                             }}
                         >
-                            <span className="text-[#767676] text-xs/[12px]">{a.raw.name}</span>
-                            <span className="text-[#2f2f2f] font-xs/[12px]">
+                            <span className="text-[#767676] text-sm/[14px]">{a.raw.name}</span>
+                            <span className="text-[#2f2f2f] text-sm/[15px]">
                                 {cfg.symbol || ''}{a.raw.yval !== null ? formatNumberWithCommas(a.raw.yval, cfg?.decimal ? 2 : 0, false, true) : '-'}
                             </span>
+                            {cfg?.key === 'buybox' && <span className="text-[#2f2f2f] truncate font-medium text-[12px]/[16px] flex items-center gap-1">
+                                {getSellerByTimestamp(points?.date, buyboxSellerHistory, sellerData)?.sellerType ? 'FBA' : 'FBM' || 'Unknown Seller'} {getSellerByTimestamp(points?.date, buyboxSellerHistory, sellerData)?.name || 'Unknown Seller'}{" "}<FaStar className='text-gray-600 !w-[20px]' />{getSellerByTimestamp(points?.date, buyboxSellerHistory, sellerData)?.rating || '0.0'}
+                            </span>}
                         </div>
                     </React.Fragment>
                 );

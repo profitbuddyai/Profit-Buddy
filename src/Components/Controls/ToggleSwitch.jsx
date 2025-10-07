@@ -7,7 +7,7 @@ const ToggleSwitch = ({ options = [], selected, onChange, className, label, info
     return (
         <div className={`flex items-center gap-2 justify-between  ${className}`}>
             {label && (
-                <label className="flex gap-2 items-center text-sm font-medium text-secondary fontDmmono">
+                <label className="flex gap-2 items-center text-nowrap text-sm font-medium text-secondary fontDmmono">
                     {label}
                     {info && (<InfoTooltip content={info} id={`InputInfo_${label}`} />)}
                 </label>

@@ -123,7 +123,7 @@ html {
   }
 }
 
-.productCardShadow:hover {
+.productCardShadow {
   box-shadow:
     0rem .5rem 1.5rem -.5rem color-mix(in oklab, var(--secondary) 20%, transparent),
     0rem .5rem 1rem -.25rem color-mix(in oklab, var(--secondary) 5%, transparent),
