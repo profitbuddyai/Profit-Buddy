@@ -3,6 +3,7 @@ import { formatDate, formatTime, formatYear, getSellerByTimestamp, lightenColor 
 import { formatNumberWithCommas } from '../../../Utils/NumberUtil';
 import { ScaleFactors } from '../../../Enums/Enums';
 import { FaStar } from 'react-icons/fa';
+import Rating from '../Rating';
 
 // A CustomTooltip that assigns up to 4 tooltips to the four quadrants
 // (top-left, top-right, bottom-left, bottom-right) and tries to avoid
@@ -91,8 +92,8 @@ export default function CustomTooltip({ rect, points, visible, configs, size = '
                 // determine tooltip size for this point based on config (so placement uses proper size)
                 const cfgForP = configs?.find(c => c.name === p.raw.name) || {};
                 const isBuybox = cfgForP?.key === 'buybox';
-                const TT_W = (isBuybox ? 140 : 80) * scaleFactor;
-                const TT_H = (isBuybox ? 54 : 40) * scaleFactor;
+                const TT_W = (isBuybox ? 160 : 54) * scaleFactor;
+                const TT_H = (isBuybox ? 80 : 40) * scaleFactor;
 
                 const qp = quadrantPlacement(TT_W, TT_H)[q](p.px, p.py);
                 const clamped = clampToChart({ left: qp.left, top: qp.top, width: TT_W, height: TT_H });
@@ -266,12 +267,13 @@ export default function CustomTooltip({ rect, points, visible, configs, size = '
 
                 const connStyle = connectorStyle(sx, sy, tx, ty, 'gray');
 
+                const buyboxSellerData = getSellerByTimestamp(points?.date, buyboxSellerHistory, sellerData) || {};
+
                 return (
                     <React.Fragment key={i}>
                         <div style={connStyle} className="rounded-full " />
-
                         <div
-                            className={`transition-none ease-linear duration-75 ${cfg?.key === 'buybox' ? 'w-[140px] h-[54px]' : 'w-[80px] h-[40px]'}  flex flex-col text-sm p-1 shadow border`}
+                            className={`transition-none ease-linear duration-75 ${cfg?.key === 'buybox' ? 'w-[160px] h-[54px]' : 'w-[80px] h-[40px]'}  flex flex-col text-sm p-1 shadow border`}
                             style={{
                                 position: 'absolute',
                                 left,
@@ -284,13 +286,18 @@ export default function CustomTooltip({ rect, points, visible, configs, size = '
                                 transform: `scale(${scaleFactor})`,
                             }}
                         >
-                            <span className="text-[#767676] text-sm/[14px]">{a.raw.name}</span>
+                            <span className="text-[#767676] text-xs/[13px]">{a.raw.name}</span>
                             <span className="text-[#2f2f2f] text-sm/[15px]">
                                 {cfg.symbol || ''}{a.raw.yval !== null ? formatNumberWithCommas(a.raw.yval, cfg?.decimal ? 2 : 0, false, true) : '-'}
                             </span>
-                            {cfg?.key === 'buybox' && <span className="text-[#2f2f2f] truncate font-medium text-[12px]/[16px] flex items-center gap-1">
-                                {getSellerByTimestamp(points?.date, buyboxSellerHistory, sellerData)?.sellerType ? 'FBA' : 'FBM' || 'Unknown Seller'} {getSellerByTimestamp(points?.date, buyboxSellerHistory, sellerData)?.name || 'Unknown Seller'}{" "}<FaStar className='text-gray-600 !w-[20px]' />{getSellerByTimestamp(points?.date, buyboxSellerHistory, sellerData)?.rating || '0.0'}
-                            </span>}
+                            {cfg?.key === 'buybox' && (
+                                <div className="text-[#424242] text-[12px]/[16px] flex items-center gap-1">
+                                    <span className='uppercase font-semibold text-orange-500'>{buyboxSellerData?.sellerType}</span>
+                                    <span className='truncate'>{buyboxSellerData?.name || 'Unknown Seller'}</span>
+                                    <FaStar className='text-gray-500 min-w-[12px]' />
+                                    <span>{formatNumberWithCommas(buyboxSellerData?.rating, 2, false, false)}/{buyboxSellerData?.ratingCount || '0'}</span>
+                                </div>
+                            )}
                         </div>
                     </React.Fragment>
                 );

@@ -9,17 +9,17 @@ const Rating = ({ rating = 0, count = 0 , className }) => {
   // Create 5 stars based on the rating value
   for (let i = 1; i <= 5; i++) {
     if (rating >= i) {
-      stars.push(<FaStar key={i} className="text-accent" />);
+      stars.push(<FaStar key={i} />);
     } else if (rating >= i - 0.5) {
-      stars.push(<FaStarHalfAlt key={i} className="text-accent" />);
+      stars.push(<FaStarHalfAlt key={i} />);
     } else {
-      stars.push(<FaRegStar key={i} className="text-accent" />);
+      stars.push(<FaRegStar key={i} />);
     }
   }
 
   return (
     <div className={`flex items-end gap-2 py-0.5 text-secondary ${className}`}>
-      <div className="flex text-[15px]">{stars}</div>
+      <div className="flex text-[15px] text-accent">{stars}</div>
       <span className="text-[13px]/[13px] font-medium ">{`(${formatNumberWithCommas(count , 0 , false , true)})`}</span>
     </div>
   );

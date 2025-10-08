@@ -22,6 +22,8 @@ const ProductCard = ({ product }) => {
   const { info, graphData, images, reviews } = product
   const [loading, setloading] = useState(false)
   const [productOffers, setproductOffers] = useState({})
+  const [buyboxSellerIds, setBuyboxSellerIds] = useState(null);
+  const [sellerData, setSellerData] = useState(null);
   const [showChart, setShowChart] = useState(false);
 
   const { offers } = productOffers || {}
@@ -31,6 +33,8 @@ const ProductCard = ({ product }) => {
       setloading(true)
       const responce = await getProductOffers(product?.asin)
       setproductOffers(responce?.offer)
+      setBuyboxSellerIds(responce?.buyBoxSellerHistory);
+      setSellerData(responce?.sellerData);
       setloading(false)
     } catch (error) {
       setloading(false)
@@ -161,7 +165,7 @@ const ProductCard = ({ product }) => {
                               {offer?.seller}
                             </span>
                           </p>
-                          <p className="px-1 py-1.5 border-r border-accent">{offer?.stock || "-"}</p>
+                          <p className="px-1 py-1.5 border-r border-accent">{offer?.stock || "0"}</p>
                           <p className="px-1 py-1.5">{formatNumberWithCommas(offer?.price)}</p>
                           <Tooltip
                             id={`${offer?.sellerInfo?.id}-${index}`}
@@ -191,7 +195,7 @@ const ProductCard = ({ product }) => {
 
               <div className='max-w-[750px] min-w-[750px] h-max overflow-hidden flex items-end  justify-end  '>
                 {/* {showChart && ( */}
-                  <ChartWraaper product={product} className='origin-top-left' size='small' />
+                <ChartWraaper product={product} className='origin-top-left' size='small' buyboxSellerHistory={buyboxSellerIds} sellerData={sellerData} />
                 {/* )} */}
               </div>
 

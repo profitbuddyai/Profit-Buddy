@@ -66,7 +66,7 @@ export default function PopupMenu({ label = '', trigger = null, data = [], onOpe
     const menu = createPortal(
         <div
             ref={menuRef}
-            className={`fixed w-max p-1.5 rounded-lg customShadow bg-primary z-[9990009] transition-transform duration-150 ease-in-out
+            className={`fixed w-max p-1.5 rounded-lg customShadow bg-primary z-[9990009] transition-[opacity\\,transform] duration-150 ease-in-out
         ${visible ? "opacity-100 translate-y-0 visible" : "opacity-0 -translate-y-2 invisible"}`}
             style={{ top: position.top, left: position.left }}
         >

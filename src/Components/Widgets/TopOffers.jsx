@@ -72,7 +72,7 @@ const TopOffers = ({ product, productOffers, offerLoading }) => {
                                             </td>
 
                                             <td className="px-2.5 py-1.5 text-center border-r border-accent">
-                                                {offer?.stock || "-"}
+                                                {offer?.stock || "0"}
                                             </td>
 
                                             <td className="px-2.5 py-1.5 text-center border-r border-accent">
