@@ -27,3 +27,12 @@ export const deleteInvite = async (inviteId) => {
     throw error;
   }
 };
+
+export const grantFullAccess = async (payload) => {
+  try {
+    const { data } = await authClient.post(`${EndPoints.grantFullAccess}`, payload);
+    return data;
+  } catch (error) {
+    throw error;
+  }
+};

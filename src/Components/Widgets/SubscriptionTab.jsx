@@ -91,7 +91,7 @@ const SubscriptionTab = () => {
                     </p>
                 </div>
 
-                {subscription?.currentPeriodStart && subscription?.currentPeriodEnd && (
+                {subscription?.currentPeriodStart && subscription?.currentPeriodEnd && PlanData?.id !== "full_access" && (
                     <>
                         <div className="flex justify-between items-center">
                             <p className="text-base  text-secondary/80">Start Date</p>

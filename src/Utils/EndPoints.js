@@ -15,6 +15,7 @@ export const EndPoints = {
   submitSupportQuery: 'post/submit-support-query',
   verifyCoupon: `/post/verify-coupon`,
   inviteUser: `/post/invite-user`,
+  grantFullAccess: `/post/grant-full-access`,
 
   getUserDetail: `/get/user-detail`,
   getProducts: `/get/products`,

@@ -4,9 +4,10 @@ import Button from './../Controls/Button';
 import { LuMailPlus } from "react-icons/lu";
 import CustomInput from '../Controls/CustomInput';
 import { MdOutlineMail } from 'react-icons/md';
-import { inviteUser, getInvitedUsers, deleteInvite } from './../../Apis/Admin/AddUser';
+import { inviteUser, getInvitedUsers, deleteInvite, grantFullAccess } from './../../Apis/Admin/AddUser';
 import { toast } from 'react-toastify';
 import { AiOutlineDelete } from "react-icons/ai";
+import useConfirm from '../../Hooks/useConfirm';
 
 const AdminAddUser = () => {
     const [open, setOpen] = useState(false);
@@ -16,6 +17,9 @@ const AdminAddUser = () => {
     const [deleteLoading, setDeleteLoading] = useState(false);
     const [fetching, setFetching] = useState(true);
     const [invitedUsers, setInvitedUsers] = useState([]);
+
+    const { confirm, ConfirmationModal } = useConfirm()
+
 
     // ✅ Fetch Invited Users
     useEffect(() => {
@@ -50,20 +54,34 @@ const AdminAddUser = () => {
             setError('');
             setLoading(true);
             const response = await inviteUser({ email });
-            toast.success(response?.message);
-            setOpen(false);
-            setEmail('');
+            if (!response?.success && response?.alreadyExists) {
+                const ok = await confirm(
+                    "User Already Exist",
+                    response?.message,
+                    "No, Leave it",
+                    "Yes, Grant access",
+                    "danger"
+                );
 
-            // 🧩 Add new invite to top
-            setInvitedUsers((prev) => [
-                {
-                    _id: Date.now().toString(),
-                    email,
-                    status: 'pending',
-                    createdAt: new Date(),
-                },
-                ...prev,
-            ]);
+                if (!ok) return;
+
+                const response2 = await grantFullAccess({ userId: response?.userId });
+                toast.success(response2?.message)
+                setOpen(false);
+                setEmail('');
+                setInvitedUsers((prev) => [
+                    response2?.invitation,
+                    ...prev,
+                ]);
+            } else {
+                toast.success(response?.message);
+                setOpen(false);
+                setEmail('');
+                setInvitedUsers((prev) => [
+                    response?.invitation,
+                    ...prev,
+                ]);
+            }
         } catch (err) {
             const message = err.response ? err.response.data.message : err.message;
             toast.error(message);
@@ -197,6 +215,8 @@ const AdminAddUser = () => {
                     error={error}
                 />
             </Modal>
+
+            {ConfirmationModal}
         </div>
     );
 };
