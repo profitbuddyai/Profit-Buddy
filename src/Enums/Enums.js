@@ -115,6 +115,13 @@ export const SUBSCRIPTION_PLANS_DATA = {
     benefits: ['Cancel at anytime', 'Access to ProfitBuddy University, Store Spying, AI Buddy, Chrome Extension, Sales Estimator, and more...'],
     includes: ['3 Users (With Individual Analytics)', 'Unlimited Product Lookups', 'Unlimited AI Access', 'Priority Support + Onboarding'],
   },
+  full_access: {
+    id: 'full_access',
+    idName: 'Full Access (Admin Invite)',
+    name: 'Full Access',
+    type: 'full_access',
+    quotas: { aiChat: -1, supportAccess: true },
+  },
 };
 
 export const VITE_STRIPE_PUBLISHABLE_KEY = NODE_ENV !== 'production' ? import.meta.env.VITE_TEST_STRIPE_PUBLISHABLE_KEY : import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY;

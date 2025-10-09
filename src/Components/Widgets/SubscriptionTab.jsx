@@ -22,8 +22,6 @@ const SubscriptionTab = () => {
     const subscription = user?.currentSubscription;
     const PlanData = SUBSCRIPTION_PLANS_DATA?.[subscription?.planName]
 
-
-
     useEffect(() => {
         if (subscription?.currentPeriodEnd) {
             const now = new Date();
@@ -81,7 +79,7 @@ const SubscriptionTab = () => {
 
                 <div className="flex justify-between items-center">
                     <p className="text-base  text-secondary/80">Plan Name</p>
-                    <p className="text-base text-lText">{PlanData?.name || "-"}</p>
+                    <p className="text-base text-lText">{PlanData?.idName || "-"}</p>
                 </div>
 
                 <div className="flex justify-between items-center">

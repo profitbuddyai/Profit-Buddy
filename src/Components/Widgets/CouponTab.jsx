@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { deleteCoupon, generateCoupon, getCoupons } from "../../Apis/Coupon";
+import { deleteCoupon, generateCoupon, getCoupons } from "../../Apis/Admin/Coupon";
 import CustomInput from "../Controls/CustomInput";
 import RadioButton from "../Controls/RadioButton";
 import { SUBSCRIPTION_PLANS_DATA } from "../../Enums/Enums";

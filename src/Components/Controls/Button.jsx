@@ -11,6 +11,7 @@ const Button = ({
     className = '',
     type = 'button',
     disabled = false,
+    icon = null,
 }) => {
 
     const variantsClasses = {
@@ -52,11 +53,16 @@ const Button = ({
                 className
             )}
         >
-            {label && (
-                <span className={clsx(loading ? "invisible" : "visible", "text-nowrap")}>
-                    {label}
-                </span>
-            )}
+            <div className={clsx(loading ? "invisible" : "visible" , "flex items-center justify-center gap-2")}>
+                {icon && (
+                    icon
+                )}
+                {label && (
+                    <span className={clsx(loading ? "invisible" : "visible", "text-nowrap")}>
+                        {label}
+                    </span>
+                )}
+            </div>
 
             {loading && (
                 <span className="absolute inset-0 flex items-center justify-center">
