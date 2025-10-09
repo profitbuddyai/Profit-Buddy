@@ -1,5 +1,5 @@
-import { EndPoints } from '../Utils/EndPoints';
-import { authClient } from '../Services/Axios';
+import { EndPoints } from '../../Utils/EndPoints';
+import { authClient } from '../../Services/Axios';
 
 export const getCoupons = async () => {
   try {

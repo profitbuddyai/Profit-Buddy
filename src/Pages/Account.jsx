@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { FiUser, FiCreditCard, FiDollarSign, FiSettings, FiUsers, FiHelpCircle, FiTag } from "react-icons/fi";
+import { HiOutlineUserAdd } from "react-icons/hi";
 
 import ProfileTab from "../Components/Widgets/ProfileTab";
 import SubscriptionTab from '../Components/Widgets/SubscriptionTab';
@@ -15,6 +16,7 @@ import AnimationWrapper from './../Components/Layout/AnimationWrapper';
 import CouponTab from "../Components/Widgets/CouponTab";
 import { useSelector } from "react-redux";
 import { RiDiscountPercentLine } from "react-icons/ri";
+import AdminAddUser from "../Components/Widgets/AdminAddUser";
 
 
 const Account = () => {
@@ -34,6 +36,7 @@ const Account = () => {
     { name: "Users", value: "logins", icon: FiUsers },
     { name: "Support", value: "support", icon: FiHelpCircle },
     ...(user?.isAdmin ? [{ name: "Coupons", value: "coupons", icon: RiDiscountPercentLine }] : []),
+    ...(user?.isAdmin ? [{ name: "Add User", value: "add-user", icon: HiOutlineUserAdd }] : []),
   ];
 
   useEffect(() => {
@@ -86,9 +89,8 @@ const Account = () => {
       {activeTab === 'settings' && <AnimationWrapper><SettingsTab /></AnimationWrapper>}
       {activeTab === 'logins' && <AnimationWrapper><UsersLoginTab /></AnimationWrapper>}
       {activeTab === 'support' && <AnimationWrapper><SupportTab /></AnimationWrapper>}
-      {activeTab === "coupons" && user?.isAdmin && (
-        <AnimationWrapper><CouponTab /></AnimationWrapper>
-      )}
+      {activeTab === "coupons" && user?.isAdmin && (<AnimationWrapper><CouponTab /></AnimationWrapper>)}
+      {activeTab === "add-user" && user?.isAdmin && (<AnimationWrapper><AdminAddUser /></AnimationWrapper>)}
 
     </div>
   );
