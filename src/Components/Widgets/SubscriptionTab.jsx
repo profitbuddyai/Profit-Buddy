@@ -120,7 +120,7 @@ const SubscriptionTab = () => {
                 <div className="flex gap-2 mt-4">
                     {(
                         (subscription?.status === "active" || subscription?.status === "trialing") &&
-                        PlanData?.name !== "full_access"
+                        PlanData?.id !== "full_access"
                     ) && (
                             <>
                                 <Button
