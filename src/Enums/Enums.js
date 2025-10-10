@@ -40,7 +40,7 @@ export const SalesConfig = [
 
 export const OfferCountConfig = [
   { name: 'Offer Count', key: 'offerCount', color: '#8888dd', lightColor: '#f0f0fb', symbol: '', strokeWidth: 2, decimal: false },
-  { name: 'Monthly Sold', key: 'monthlySold', color: '#f6d500', lightColor: '#fff3a8', symbol: '', strokeWidth: 2,axis: 'y2', decimal: false },
+  { name: 'Monthly Sold', key: 'monthlySold', color: '#f6d500', lightColor: '#fff3a8', symbol: '', strokeWidth: 2, axis: 'y2', decimal: false },
 ];
 
 //Icon Images
@@ -66,6 +66,7 @@ export const COUPON_CODE_PREFIX = 'PROFIT-BUDDY-';
 
 export const SUBSCRIPTION_PLANS_DATA = {
   basic_monthly: {
+    level: 1,
     id: 'basic_monthly',
     idName: 'Basic Plan Monthly',
     name: 'Basic',
@@ -79,6 +80,7 @@ export const SUBSCRIPTION_PLANS_DATA = {
   },
   basic_yearly: {
     id: 'basic_yearly',
+    level: 2,
     idName: 'Basic Plan Yearly',
     name: 'Basic',
     subText: 'Perfect for individual users getting started',
@@ -92,6 +94,7 @@ export const SUBSCRIPTION_PLANS_DATA = {
   },
   business_monthly: {
     id: 'business_monthly',
+    level: 3,
     idName: 'Business Plan Monthly',
     name: 'Business',
     subText: 'Ideal for teams needing full access',
@@ -104,6 +107,7 @@ export const SUBSCRIPTION_PLANS_DATA = {
   },
   business_yearly: {
     id: 'business_yearly',
+    level: 4,
     idName: 'Business Plan Yearly',
     name: 'Business',
     subText: 'Ideal for teams needing full access',

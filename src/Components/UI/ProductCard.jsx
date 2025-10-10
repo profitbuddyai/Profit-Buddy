@@ -26,31 +26,31 @@ const ProductCard = ({ product }) => {
   const [sellerData, setSellerData] = useState(null);
   const [showChart, setShowChart] = useState(false);
 
-  const { offers } = productOffers || {}
+  // const { offers } = productOffers || {}
 
-  const handleGetOffers = async () => {
-    try {
-      setloading(true)
-      const responce = await getProductOffers(product?.asin)
-      setproductOffers(responce?.offer)
-      setBuyboxSellerIds(responce?.buyBoxSellerHistory);
-      setSellerData(responce?.sellerData);
-      setloading(false)
-    } catch (error) {
-      setloading(false)
-      console.error(error.response ? error.response.data.message : error.message);
-    }
-  }
+  // const handleGetOffers = async () => {
+  //   try {
+  //     setloading(true)
+  //     const responce = await getProductOffers(product?.asin)
+  //     setproductOffers(responce?.offer)
+  //     setBuyboxSellerIds(responce?.buyBoxSellerHistory);
+  //     setSellerData(responce?.sellerData);
+  //     setloading(false)
+  //   } catch (error) {
+  //     setloading(false)
+  //     console.error(error.response ? error.response.data.message : error.message);
+  //   }
+  // }
 
   useEffect(() => {
     const timeout = setTimeout(() => setShowChart(true), 0);
     return () => clearTimeout(timeout);
   }, []);
 
-  useEffect(() => {
-    if (!product) return
-    handleGetOffers()
-  }, [product])
+  // useEffect(() => {
+  //   if (!product) return
+  //   handleGetOffers()
+  // }, [product])
 
   return (
     <Link to={`/detail?asin=${product?.asin}`}>
@@ -124,19 +124,16 @@ const ProductCard = ({ product }) => {
                   </div>
                 </div>
               </div>
-
+{/* 
               <div className="hidden md:flex flex-col border-[1.5px] border-accent w-[200px] rounded-lg bg-accent/5 h-[260px] overflow-hidden">
                 <div className='text-sm px-3 py-2 flex justify-center items-center text-start bg-accent/60 text-secondary font-medium rounded-t-md w-full'>
                   <p className="">
                     AI Store Spy
                   </p>
-                  {/* <p className="flex gap-2 items-center px-1 font-normal">
-                    See All <FaArrowRightLong/>
-                  </p> */}
+               
                 </div>
 
                 <div className="w-full grid grid-cols-3 bg-accent/10 backdrop-blur-2xl z-10">
-                  {/* <p className="py-1.5 text-center text-sm font-medium text-secondary border-r border-accent max-w-[80px]">#</p> */}
                   <p className="py-1.5 text-center text-xs font-medium text-secondary border-r border-accent">Seller</p>
                   <p className="py-1.5 text-center text-xs font-medium text-secondary border-r border-accent">Stock</p>
                   <p className="py-1.5 text-center text-xs font-medium text-secondary">Price</p>
@@ -155,7 +152,6 @@ const ProductCard = ({ product }) => {
                     ) : (
                       offers?.map((offer, index) => (
                         <div key={index} className="bg-transparent hover:bg-accent/10  transition text-xs text-center text-lText grid grid-cols-3 ">
-                          {/* <p className="px-1 py-1.5 border-r border-accent max-w-[80px]">{index + 1 || "-"}</p> */}
                           <p className="px-1 py-1.5 border-r border-accent font-medium">
                             <span
                               data-tooltip-id={`${offer?.sellerInfo?.id}-${index}`}
@@ -184,7 +180,7 @@ const ProductCard = ({ product }) => {
                     )
                   )}
                 </div>
-              </div>
+              </div> */}
             </div>
 
 

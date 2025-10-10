@@ -133,7 +133,7 @@ const ProductDetail = () => {
                     </AnimationWrapper>
 
                     <AnimationWrapper>
-                        <CustomCard label={"AI Store Spy"}>
+                        <CustomCard label={<>AI Store Spy {productOffers?.totalOfferCount > 10 && (<span className='text-sm font-normal'>(Top 10 Offers)</span>)}</>}>
                             <TopOffers product={product} productOffers={productOffers} offerLoading={offerLoading} />
                         </CustomCard>
                     </AnimationWrapper>

@@ -10,6 +10,7 @@ export const EndPoints = {
   requestDeleteAccount: 'post/request-delete-account',
   deleteAccount: 'post/delete-account',
   createSubscription: 'post/create-subscription',
+  upgradeSubscription: 'post/upgrade-subscription',
   cancelSubscription: 'post/cancel-subscription',
   generateCoupon: 'post/generate-coupon',
   submitSupportQuery: 'post/submit-support-query',
@@ -30,6 +31,7 @@ export const EndPoints = {
   aiChat: `/get/ai-chat`,
   getCoupons: `/get/coupons`,
   getInvitedUsers: `/get/invited-users`,
+  getInvoices: `/get/invoices`,
 
   deleteCoupon: `/delete/coupon`,
   deleteInvite: `/delete/invite`,

@@ -31,31 +31,29 @@ export default function useConfirm() {
     setIsOpen(false);
   };
 
-  const ConfirmationModal = isOpen
-    ? createPortal(
-      <>
-        <Modal
-          setIsOpen={setIsOpen}
-          isOpen={isOpen}
-          extraFuntion={() => resolver(false)}
-          className={'max-'}
-          label={message?.label}
-          // subText={message?.text}
-          actions={
-            <>
-              <Button label={message?.button1} size='medium' variant="outline" action={handleCancel} />
-              <Button label={message?.button2} size='medium' variant={message?.variant || 'danger'} action={handleConfirm} />
-            </>
-          }
-        >
-          <div className=" flex  items-center flex-col w-full">
-            <p className='text-lText'>{message?.text}</p>
-            </div>
-        </Modal>
-      </>,
-      document.body
-    )
-    : null;
+  const ConfirmationModal = createPortal(
+    <>
+      <Modal
+        setIsOpen={setIsOpen}
+        isOpen={isOpen}
+        extraFuntion={() => resolver(false)}
+        className={'max-'}
+        label={message?.label}
+        // subText={message?.text}
+        actions={
+          <>
+            <Button label={message?.button1} size='medium' variant="outline" action={handleCancel} />
+            <Button label={message?.button2} size='medium' variant={message?.variant || 'danger'} action={handleConfirm} />
+          </>
+        }
+      >
+        <div className=" flex  items-center flex-col w-full">
+          <p className='text-lText'>{message?.text}</p>
+        </div>
+      </Modal>
+    </>,
+    document.body
+  );
 
   return { confirm, ConfirmationModal };
 }

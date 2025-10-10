@@ -9,7 +9,7 @@ import { toast } from "react-toastify";
 import { setUserSubscription } from "../Redux/Slices/UserSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { SUBSCRIPTION_PLANS_DATA } from "../Enums/Enums";
-import { cancelSubscription, createSubscription } from "../Apis/Subscription";
+import { cancelSubscription, createSubscription, upgradeSubscription } from "../Apis/Subscription";
 import { useNavigate } from "react-router-dom";
 import AnimationWrapper from "../Components/Layout/AnimationWrapper";
 import { authClient } from "../Services/Axios";
@@ -26,28 +26,47 @@ const Plans = () => {
     const dispatch = useDispatch()
     const navigate = useNavigate()
 
-    const handleSubscribePlan = async (planId) => {
-        console.log(planId);
-
+    const handleCreateSubscription = async (planId) => {
         const ok = await confirm("Proceed with Subscription?", "You will be redirected to the checkout page to complete your subscription.", "No, cancel", "Yes, continue", "secondary")
         if (!ok) return
-
 
         if (!planId) {
             toast.error('This is not a valid plan.')
             return
         }
+        setLoading(true)
+        try {
+            await authClient.get("/get/verifyCanSubscribe");
+            navigate(`/checkout?planName=${planId}`)
+        } catch (err) {
+            console.error(err);
+            const message = err.response ? err.response.data.error : err.message
+            toast.error(message)
+        } finally {
+            setLoading(false)
+        }
+    }
+    const handleUpgradeSubscription = async (planId) => {
+        if (!planId) {
+            toast.error('This is not a valid plan.')
+            return
+        }
+
+        const ok = await confirm(
+            "Upgrade Subscription",
+            `When you upgrade your plan to ${SUBSCRIPTION_PLANS_DATA?.[planId]?.idName}, We will automatically calculate the remaining balance from your current subscription. You’ll only be charged the adjusted amount based on the unused days of your previous plan.`,
+            "No, Cancel",
+            "Yes, Upgrade Plan",
+            "secondary"
+        );
+        if (!ok) return
 
         setLoading(true)
         try {
-            // const data = await createSubscription({ planName: planId })
-            // dispatch(setUserSubscription(data?.subscription))
-            // if (data?.clientSecret) {
-            await authClient.get("/get/verifyCanSubscribe");
-            navigate(`/checkout?planName=${planId}`)
-            // } else {
-            // toast.error("Unable to start checkout session. Please try again.");
-            // }
+            const responce = await upgradeSubscription({ planName: planId });
+            dispatch(setUserSubscription(responce?.subscription))
+            toast.success
+            navigate(`/`)
         } catch (err) {
             console.error(err);
             const message = err.response ? err.response.data.error : err.message
@@ -103,6 +122,7 @@ const Plans = () => {
                     {Object.values(SUBSCRIPTION_PLANS_DATA)
                         .filter(plan => plan.type.toLowerCase() === billingCycle.toLowerCase()) // only monthly/yearly
                         .map((plan) => {
+                            const currentPlanData = SUBSCRIPTION_PLANS_DATA?.[userSubscription.planName] || {}
                             return (
                                 <div
                                     key={plan.id}
@@ -125,17 +145,47 @@ const Plans = () => {
                                         </p>
                                     </div>
                                     <Button
-                                        label={userSubscription?.status === 'active' && userSubscription?.planName === plan.id
-                                            ? "Cancel Plan"
-                                            : " Start 14 days Free Trial"
+                                        label={(() => {
+                                            if (!userSubscription) return "Start 14 Days Free Trial";
+
+                                            if (
+                                                (userSubscription.status === "active" ||
+                                                    userSubscription.status === "trialing") &&
+                                                userSubscription.planName === plan.id
+                                            ) {
+                                                return "Cancel Plan";
+                                            }
+
+                                            const currentLevel = currentPlanData?.price; // e.g. 1 for Basic, 2 for Pro, etc.
+                                            const newLevel = plan.price;
+
+                                            if (newLevel > currentLevel) return "Upgrade Plan";
+                                            if (newLevel < currentLevel) return "Upgrade Plan";
+
+                                            return "Change Plan";
+                                        })()}
+                                        action={(() => {
+                                            if (!userSubscription) return () => handleCreateSubscription(plan.id);
+
+                                            if (
+                                                (userSubscription.status === "active" ||
+                                                    userSubscription.status === "trialing") &&
+                                                userSubscription.planName === plan.id
+                                            ) {
+                                                return handleCancelSubscription;
+                                            }
+
+                                            return () => handleUpgradeSubscription(plan.id);
+                                        })()}
+                                        variant={
+                                            (userSubscription?.status === "active" ||
+                                                userSubscription?.status === "trialing") &&
+                                                userSubscription?.planName === plan.id
+                                                ? "outline"
+                                                : "secondary"
                                         }
-                                        action={userSubscription?.status === 'active' && userSubscription?.planName === plan.id
-                                            ? handleCancelSubscription
-                                            : () => handleSubscribePlan(plan.id)
-                                        }
-                                        variant={userSubscription?.status === 'active' && userSubscription?.planName === plan.id ? "outline" : "secondary"}
                                         size="medium"
-                                        className={`${!plan.isPopular ? "" : "ring-4 ring-secondary/20 "}mb-3 w-full`}
+                                        className={`${!plan.isPopular ? "" : "ring-4 ring-secondary/20"} mb-3 w-full`}
                                         disabled={loading}
                                     />
 
