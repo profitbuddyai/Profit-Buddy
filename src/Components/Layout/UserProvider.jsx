@@ -20,8 +20,6 @@ export default function UserProvider({ children }) {
             try {
                 dispatch(setUserLoading(true));
                 const data = await getUserDetail();
-                console.log(data?.nodeEnv, NODE_ENV , "🛍️🛍️🛍️");
-
                 dispatch(setUser(data?.user));
             } catch (err) {
                 // localStorage.removeItem("ProfitBuddyToken");

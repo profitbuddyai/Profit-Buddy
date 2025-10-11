@@ -7,9 +7,6 @@ import SalesAndOfferDygraphs from '../Widgets/SalesAndOfferDygraphs ';
 const ChartWraaper = ({ product, size = 'large', buyboxSellerHistory = [], sellerData = {}, className = '' }) => {
     const { asin, historyLength } = product || {};
     const { keepaGraphData } = product?.graphData || {};
-    console.log(buyboxSellerHistory, sellerData);
-
-
     const [graphData, setGraphData] = useState([]);
     const [formattedGraphData, setFormattedGraphData] = useState([]);
     const [loading, setLoading] = useState(false);

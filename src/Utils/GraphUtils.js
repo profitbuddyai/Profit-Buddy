@@ -206,8 +206,6 @@ export const lightenColor = (hex, amount = 0.7) => {
 };
 
 export const getSellerByTimestamp = (targetTimestamp, history, sellerData) => {
-  console.log(targetTimestamp , history , sellerData);
-  
   if (!Array.isArray(history) || history.length === 0) return null;
 
   const sorted = [...history].sort((a, b) => a.date - b.date);

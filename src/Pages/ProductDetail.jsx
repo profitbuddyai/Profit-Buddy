@@ -133,7 +133,15 @@ const ProductDetail = () => {
                     </AnimationWrapper>
 
                     <AnimationWrapper>
-                        <CustomCard label={<>AI Store Spy {productOffers?.totalOfferCount > 10 && (<span className='text-sm font-normal'>(Top 10 Offers)</span>)}</>}>
+                        <CustomCard
+                            label={<>
+                                AI Store Spy{" "}
+                                {product?.info?.offerCount > productOffers?.offers?.length && (
+                                    <span className="text-sm font-normal">
+                                        (Lowest {productOffers?.offers?.length} offers shown — new only)
+                                    </span>
+                                )}</>}
+                        >
                             <TopOffers product={product} productOffers={productOffers} offerLoading={offerLoading} />
                         </CustomCard>
                     </AnimationWrapper>
@@ -160,7 +168,7 @@ const ProductDetail = () => {
 
                 </div>
             </div>
-        </div>
+        </div >
     );
 }
 

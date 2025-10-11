@@ -12,7 +12,7 @@ export const sellerSlice = createSlice({
   initialState,
   reducers: {
     setSeller: (state, action) => {
-      state.seller = action.payload;
+      state.seller = { ...state.seller, ...action.payload };
     },
     setSellerProducts: (state, action) => {
       state.seller.products = action.payload;
@@ -36,6 +36,7 @@ export const sellerSlice = createSlice({
   },
 });
 
-export const { setSeller, pushSellerProducts, setSellerLoading, setSellerProductsLoading, setSellerCurrentPage, setSellerAsins, resetSellerSlice, setSellerProducts } = sellerSlice.actions;
+export const { setSeller, pushSellerProducts, setSellerLoading, setSellerProductsLoading, setSellerCurrentPage, setSellerAsins, resetSellerSlice, setSellerProducts } =
+  sellerSlice.actions;
 
 export const sellerReducer = sellerSlice.reducer;

@@ -48,8 +48,6 @@ const Checkout = () => {
   }, [])
 
   const handleCardSaved = async (paymentMethod) => {
-    console.log("Payment Method Saved:", paymentMethod);
-    
     setSavedCard(paymentMethod);
     setClientSecret(null);
     await handleSubscribe(paymentMethod); // pass directly

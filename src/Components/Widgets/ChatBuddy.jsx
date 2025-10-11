@@ -51,8 +51,6 @@ const ChatBuddy = () => {
             setChat((prev) => [...prev, { sender: 'bot', text: '' }]);
 
             const response = await aiChatStream({ message: userMessage })
-            console.log(response);
-
             onMessageChunk(response?.message)
             const usedQuota = response?.quotaData || 0;
             setQuotaUsed(usedQuota);

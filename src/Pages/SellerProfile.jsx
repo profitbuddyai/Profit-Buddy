@@ -114,13 +114,6 @@ const SellerProfile = () => {
         });
     };
 
-    const handleRemove = (type, value) => {
-        setQueryFilterLocal((prev) => ({
-            ...prev,
-            [type]: prev[type].filter((v) => v !== value),
-        }));
-    };
-
     const handleReset = () => setQueryFilterLocal(FILTER_INITIAL);
 
     const handleApplyFilter = () => {
@@ -147,6 +140,7 @@ const SellerProfile = () => {
     // }, [asins]);
 
     /** UI States */
+
     if (sellerLoading) {
         return (
             <div className="flex flex-col items-center justify-center py-16 text-lText bg-primary">
